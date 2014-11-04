@@ -1,0 +1,208 @@
+.serif(){
+	font-family: 'IM Fell English', serif;
+	font-weight: 400;
+}
+
+@green : #a1b878;
+
+
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	background-color: #fdf4f5;
+	background-color: #F0E8D9;
+	//background: url(../img/seamless_paper_texture5.jpg) repeat 0 0;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+html,body {
+	height: 100%;
+	overflow: hidden;
+}
+
+.tick {
+	line {
+		stroke: rgb(133, 102, 48);
+		stroke-width:1px;
+	}
+}
+
+path.domain {
+	stroke:rgb(133, 102, 48);
+	stroke-width:1px;
+	fill:transparent;
+}
+
+.gridline {
+	stroke: #F1DEBC;
+}
+
+
+
+#top-100-nav text {
+	font-family: 'Lato';
+	font-size: 9px;
+}
+
+#top-100-svg .author text {
+	font-family: 'Lato';
+}
+
+#top-100-svg .tick text {
+	font-family: 'Lato';
+	font-size: 12px;
+}
+
+#top-100-nav {
+	position: relative;
+	text-align: center;
+	//background-color: #F0E8D9;
+}
+
+#top-100-svg {
+	background-color: rgba(255,255,255,0.4);
+}
+
+#drag-container {
+	display: block;
+	width:100%;
+	height: 100px;
+	position: absolute;
+	top: 9px;
+	left: 0;
+	margin: 0 20px;
+}
+
+#drag {
+	display: block;
+	width:100px;
+	height: 100px;
+	background-color: rgba(255,255,255,.3);
+	border: 4px solid #fff;
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	cursor: pointer;
+	cursor: -webkit-grab; cursor: -moz-grab;
+}
+
+.dragging, .dragging #drag {
+	cursor: -webkit-grabbing; cursor: -moz-grabbing;
+}
+
+.author circle, #top-100-nav circle {
+	fill: #936939;
+	fill: #5b2719;
+	fill: #B17325;
+	fill: #492B05;
+	fill: #332008;
+}
+#xaxis-label {
+	font-family: 'Lato';
+	font-size: 11px;
+	text-align: center;
+	position: relative;
+	left: 0;
+	top: 4px;
+}
+
+
+.root {
+	fill: #613407;
+	/*
+stroke: black;
+	stroke-width:.75px;
+*/
+}
+#legend text {
+	font-family: 'Lato',sans-serif;
+	font-size: 10px;
+}
+
+#year_grid line, #leaf_grid line, #root_grid line {
+	stroke: #fff;
+	opacity:.2;
+}
+
+#dirt {
+	fill: rgba(242, 229, 216, 1);
+}
+
+.numbers {
+	font-family: 'Lato',sans-serif;
+	font-size: 10px;
+}
+
+.title, .year_axis_title {
+	font-family: 'Lato',sans-serif;
+	font-size: 8px;
+	font-weight: normal;
+}
+
+.lifetime {
+	opacity: 0;
+}
+
+.lifetime line {
+	stroke: black;
+}
+
+#tooltip {
+	background-color: #efe7d9;
+	padding: .5em 1em;
+	.serif();
+	text-align: center;
+	box-shadow: 1px -2px 2px rgba(0,0,0,.1);
+}
+
+#fixed-nav {
+	position: fixed;
+	top:0;
+	bottom: 0;
+	right:0;
+	
+}
