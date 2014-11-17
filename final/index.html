@@ -3,10 +3,10 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Naming the Animal Kingdom</title>
-		
+		<meta name="viewport" content="width=device-width, initial-scale=device-width,maximum-scale=1.0, user-scalable=yes">
 		<link href='http://fonts.googleapis.com/css?family=Lato:100,400|IM+Fell+English:400,400italic' rel='stylesheet' type='text/css'>
 		<link href="css/main.css" rel="stylesheet" type="text/css" />
-		
+		<script src="js/modernizr.js"></script>
 	</head>
 	<body>
 	
@@ -14,7 +14,7 @@
 			<div id="awrap">
 				<a href="#start" class="active"><span class="dot"><span class="dot1"></span><span class="dot2"></span></span><div>Home</div></a>
 				<a href="#intro"><span class="dot"><span class="dot1"></span><span class="dot2"></span></span><div>Introduction</div></a>
-				<a href="#main-viz-wrapper"><span class="dot"><span class="dot1"></span><span class="dot2"></span></span><div>Top 25 Authors</div></a>
+				<a href="#main-viz-wrapper"><span class="dot"><span class="dot1"></span><span class="dot2"></span></span><div>Top 50 Authors</div></a>
 				<a href="#top-100"><span class="dot"><span class="dot1"></span><span class="dot2"></span></span><div>Top 100 Authors</div></a>
 				<a href="#data-methods"><span class="dot"><span class="dot1"></span><span class="dot2"></span></span><div>Data Source & Methods</div></a>
 			</div>
@@ -55,13 +55,73 @@
 			
 			<div class="section" id="top-100" data-dot='3'>
 				<div class="shim">
-				test4
+					
+					<h2 id="top100-header">The Top <span class="num-bump">100</span> Authors of the Animal Kingdom</h2>
+					
+					<div id="bars">
+						<div class="bar-wrapper" style="position: relative;">
+							<div id="legend2"><div id="leg-labels2"><div class="legend-text"><span class="legend-circ Acanthocephala" style="background-color: rgb(205, 202, 45);"></span><span class="legend-label">Acanthocephala</span></div><div class="legend-text"><span class="legend-circ Annelida" style="background-color: rgb(110, 0, 107);"></span><span class="legend-label">Annelida</span></div><div class="legend-text"><span class="legend-circ Arthropoda" style="background-color: rgb(164, 170, 20);"></span><span class="legend-label">Arthropoda</span></div><div class="legend-text"><span class="legend-circ Brachiopoda" style="background-color: rgb(204, 204, 204);"></span><span class="legend-label">Brachiopoda</span></div><div class="legend-text"><span class="legend-circ Bryozoa" style="background-color: rgb(68, 68, 68);"></span><span class="legend-label">Bryozoa</span></div><div class="legend-text"><span class="legend-circ Chordata" style="background-color: rgb(45, 154, 205);"></span><span class="legend-label">Chordata</span></div><div class="legend-text"><span class="legend-circ Cnidaria" style="background-color: rgb(205, 45, 157);"></span><span class="legend-label">Cnidaria</span></div><div class="legend-text"><span class="legend-circ Ctenophora" style="background-color: rgb(110, 12, 0);"></span><span class="legend-label">Ctenophora</span></div><div class="legend-text"><span class="legend-circ Echinodermata" style="background-color: rgb(101, 45, 205);"></span><span class="legend-label">Echinodermata</span></div><div class="legend-text"><span class="legend-circ Gastrotricha" style="background-color: rgb(86, 100, 85);"></span><span class="legend-label">Gastrotricha</span></div><div class="legend-text"><span class="legend-circ Mollusca" style="background-color: rgb(228, 152, 22);"></span><span class="legend-label">Mollusca</span></div><div class="legend-text"><span class="legend-circ Nematoda" style="background-color: rgb(78, 129, 10);"></span><span class="legend-label">Nematoda</span></div><div class="legend-text"><span class="legend-circ Nematomorpha" style="background-color: rgb(129, 10, 82);"></span><span class="legend-label">Nematomorpha</span></div><div class="legend-text"><span class="legend-circ Onychophora" style="background-color: rgb(205, 71, 45);"></span><span class="legend-label">Onychophora</span></div><div class="legend-text"><span class="legend-circ Platyhelminthes" style="background-color: rgb(53, 10, 129);"></span><span class="legend-label">Platyhelminthes</span></div><div class="legend-text"><span class="legend-circ Porifera" style="background-color: rgb(255, 128, 128);"></span><span class="legend-label">Porifera</span></div><div class="legend-text"><span class="legend-circ Rotifera" style="background-color: rgb(144, 158, 92);"></span><span class="legend-label">Rotifera</span></div><div class="legend-text"><span class="legend-circ Sipuncula" style="background-color: rgb(158, 115, 92);"></span><span class="legend-label">Sipuncula</span></div></div></div>
+						
+						</div>
+						<div class="bar-wrapper"><span class="bar-author">&nbsp;</span><div id="axis" class="bar-phylums"></div></div>
+					</div>
+					
+					<div id="blocks" class="cf container" style="margin-left:40px;">
+						<div style="padding: 0 2em;margin-bottom: 2em;"><h2 style="text-align: left;">More About the Top <span class="num-bump">100</span></h2></div>
+						<div class="row" style="padding:0 2em;">
+							
+							<div class="span3">
+								<div id="block2" class="cf"></div>
+								<h4>98 out of 100<br />were White Males</h4>
+								<p>There are no females on the list and only two Asian males, both from China.</p>
+							</div>
+							<div class="span3">
+								<div id="block1" class="cf"></div>
+								<h4>95 out of 100<br />were Entomologists</h4>
+								<p>They mostly described species from the phylum Arthropoda.</p>
+							</div>
+							<div class="span6" id="treemap-wrapper">
+								<div id="treemap"></div>
+								<h4>Why so many Entomologists?</h4>
+								<p style="max-width:none;text-align: left;">It's a numbers game. The phylum Arthropoda makes up 82.7% of all species described.</p>
+							</div>
+						</div>
+					</div>
+					<div id="map"></div>
+					
+				
 				</div>
 			</div><!-- end section -->
 			
 			<div class="section" id="data-methods" data-dot='4'>
 				<div class="shim">
-				test5
+				<div style="margin-left:40px">
+					<div class="tag" id="methods">
+						<h2>Data Source</h2>
+						<p>Roskov Y., Abucay L., Orrell T., Nicolson D., Kunze T., Culham A., Bailly N., Kirk P., Bourgoin T., DeWalt R.E., Decock W., De Wever A., eds. (2014). Species 2000 & ITIS Catalogue of Life, 19th September 2014. Digital resource at www.catalogueoflife.org/col. Species 2000: Naturalis, Leiden, the Netherlands.</p>
+						<h2>Data Methods</h2>
+						<p>All authors numbers are based on their naming the species without another author, except in the case of Wood & Bright where the opposite is true, the figure only contains species they named together.</p>
+
+<p>Species dates were cross-referenced with the author’s known birth and death, supposing that the author would be at least 18 when they began naming species, and allowing 2 years for any works to publsih post-humously. Certain authors were also cross-referenced with their known specialty (i.e. Coleoptera).</p>
+
+<p>Due to the small number of unknown years for almost all authors besides three with unique names, these species were included with the author because otherwise these authors would not make the list and the name is unique enough to suppose these species belong to him. Common names like Smith therefore might be +/- 40 species.</p>
+						<h2>Inspiration</h2>
+						<p class="smaller">This work owes credit to the following for inspiration:</p>
+						<p class="credit">Ghost Counties</p>
+						<a href="www.janwillemtulp.com/eyeo/">www.janwillemtulp.com/eyeo/</a>
+						<p class="credit">How the Recession Reshaped the Economy, in 255 Charts</p>
+						<a href="http://www.nytimes.com/interactive/2014/06/05/upshot/how-the-recession-reshaped-the-economy-in-255-charts.html">http://www.nytimes.com/interactive/2014/06/05/upshot/how-the-recession-reshaped-the-economy-in-255-charts.html</a>
+						<p class="credit">The Largest Vocabulary in Hip Hop</p>
+						<a href="http://rappers.mdaniels.com.s3-website-us-east-1.amazonaws.com/">http://rappers.mdaniels.com.s3-website-us-east-1.amazonaws.com/</a>
+						<h2>About</h2>
+						<p>Created by Kevin Ripka for completion of a Master’s of Professional Studies in Information Visualization at Maryland Institute College of Art. Not to be reproduced without permission.</p>
+						<p>Fonts: IM Fell, Lato, served by Google Fonts<br />
+							Libs: D3.js, jQuery, Modernizr, FullPage.js, jQuery UI</p>
+
+					</div><!-- tag -->
+					<img id="roots2" src="img/roots.jpg" alt="" class="contain" />
+				</div>
+				
 				</div>
 			</div><!-- end section -->
 		
@@ -86,18 +146,16 @@
 			</div>
 			
 			<div id="howread-div">
-				<!-- <div style="position:relative;"> -->
 					<a id="close-howread">×</a>
 					<h2>How to read</h2>
 					<h3>Author career tree</h3>
 					<img src="img/career-tree.gif" alt="" />
 					<div class="triangle"></div>
-				<!-- </div> -->
 			</div>
 			
 			<div id="viz-nav">
 				<h2>The Productivity of the Productive</h2>
-				<h3>The top 25 authors of the animal kingdom</h3>
+				<h3>The top 50 authors of the animal kingdom</h3>
 				<div id="viz-nav-nav">
 					<a class="carousel-btn disabled" id="carousel-left" data-direction="left"><span>«</span></a>
 					<a class="carousel-btn" id="carousel-right" data-direction="right"><span>»</span></a>
@@ -113,22 +171,16 @@
 			
 		</div>
 		
-		
-		
-	
-	
-		<!--
-<div id="main-viz-wrapper">
-			<div id="top-100-svg"></div>
-			<div id="nav"></div>
-		</div>
--->
 	
 
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+	<script src="js/jquery.slimscroll.min.js"></script>
 	<script src="js/jquery.fullPage.min.js"></script>
+	<script src="js/waypoints.min.js"></script>
+	<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
 	<script src="js/main.js"></script>
 	
 	</body>

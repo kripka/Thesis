@@ -15,11 +15,11 @@ $(function(){
 		$viz = $('#viz-wrapper');
 
 
-function Holder(){
+function HOLDER(){
 	return null;
 }
 
-	var namespace = new Holder();
+	var namespace = new HOLDER();
 	
 	namespace.states = {
 		buildbase : false,
@@ -27,20 +27,20 @@ function Holder(){
 		trees: false
 	};
 	
-	Holder.prototype.$opacityIn = function($el,duration){
+	namespace.$opacityIn = function($el,duration){
 		if (typeof duration === 'undefined') { duration = 200; }
 		$el.css('opacity',0).show().animate({'opacity':1},duration);
 	};
-	Holder.prototype.$opacityOut = function($el,duration){
+	namespace.$opacityOut = function($el,duration){
 		if (typeof duration === 'undefined') { duration = 200; }
 		$el.animate({'opacity':0},duration,'linear',function(){$(this).hide();});
 	};
 	
-	Holder.prototype.d3opacityIn = function(el,duration) {
+	namespace.d3opacityIn = function(el,duration) {
 		if (typeof duration === 'undefined') { duration = 200; }
 		el.style({'display':'block','opacity':0}).transition().duration(duration).style({'opacity':1});	
 	};
-	Holder.prototype.d3opacityOut = function(el,duration) {
+	namespace.d3opacityOut = function(el,duration) {
 		if (typeof duration === 'undefined') { duration = 200; }
 		el.style({'opacity':1}).transition().duration(duration).style({'opacity':0}).each(function(){ el.style({'display':'none'}) });	
 	};
@@ -185,10 +185,10 @@ AUTHOR_TREE.prototype.branch2 = function(x1,y1,x2,y2,count){
 var tree = new AUTHOR_TREE();
 
 /******************** FULL PAGE *****************************************/	
-var waypoint_set = false;
+
 	$('#full-page').fullpage({
 		resize: false,
-		scrollOverflow: true,
+		//scrollOverflow: true,
 		afterLoad: function(anchorLink, index){
 			nav_btns.removeClass('active');
 			$(nav_btns[index - 1]).addClass('active');
@@ -238,15 +238,10 @@ var waypoint_set = false;
 					return;
 					
 				case 4:
-					namespace.$opacityOut($viz);
-					/*
-$('#top100-header').waypoint({
-						context: $('#top100-header').parent(),
-						handler: function(direction){
-							console.log(direction);
-						}	
+					$viz.css({
+						'display':'none',
+						'opacity':0
 					});
-*/
 					return;
 					
 				default:
@@ -309,7 +304,7 @@ $('#top100-header').waypoint({
 	// d3 stuff
 	
 /******************** BUILD SCALES *****************************************/	
-	Holder.prototype.build_scales = function(data) {
+	HOLDER.prototype.build_scales = function(data) {
 		var phylum_counts = [],
 			total_counts = [],
 			temp_count,
@@ -346,7 +341,7 @@ $('#top100-header').waypoint({
 	
 /******************** BUILD BASE *****************************************/
 	
-	Holder.prototype.build_base = function(){
+	namespace.build_base = function(){
 		namespace.svg = namespace.wrapper.append('svg')
 			.attr({
 				width: namespace.settings.width,
@@ -618,7 +613,7 @@ $('#top100-header').waypoint({
 	});
 	
 	
-	Holder.prototype.build_screen2 = function(index){
+	namespace.build_screen2 = function(index){
 		var cr = 5;
 		
 		namespace.screen2g.selectAll('circle,path').remove();
@@ -1064,7 +1059,7 @@ var animateInAuthors = function(data) {
 	
 /******************** MAIN VIZ *****************************************/
 
-	Holder.prototype.build_base2 = function(){
+	namespace.build_base2 = function(){
 		
 		var leaf_grid = namespace.main_g2.append('g').attr('id',"leaf_grid");
 	
@@ -1129,8 +1124,7 @@ $('.carousel-btn').on('click',function(){
 		direction = that.data('direction'),
 		min_left = 26,
 		//max_left = -574,
-		//max_left = -1574,
-		max_left = -((namespace.data.length - 10) * 40) + 26
+		max_left = -1574,
 		btn_width = 40,
 		$wrapper = $('#viz-nav-inject'),
 		margin = parseInt($wrapper.css('marginLeft')),
@@ -1176,7 +1170,7 @@ $('.carousel-btn').on('click',function(){
 	
 /******************** JSON IN DATA *****************************************/		
 	
-	d3.json('js/top-50-trees.json',function(data){
+	d3.json('js/top-25.json',function(data){
 		namespace.data = data;
 		loader.hide();
 		$('.shim').animate({'opacity':1},500);
@@ -1191,16 +1185,13 @@ $('.carousel-btn').on('click',function(){
 	
 	
 /********************* BARS **********************/
+/*
 namespace.bars = {};
 
 namespace.bars.build = function(data){
 	var bars = d3.select('#bars'),
 		bar_wrapper,
-		total,
-		$axis = $('#axis'),
-		ax_width = $axis.width(),
-		tick,
-		tickSpacing = ax_width/30;
+		total;
 		
 	
 	// lazy, Meyrick's count
@@ -1228,60 +1219,16 @@ namespace.bars.build = function(data){
 				'background-color': function(d){return namespace.colors[d.phylum];}
 			});
 			
-		bar_wrapper.select('.bar-phylums').append('div').text(numberWithCommas(total)).attr('class','bar-total');	
+		bar_wrapper.select('.bar-phylums').append('div').text(numberWithCommas(total)).attr('class','bar-total');
 	}
 	
-	for (var i = 0,j=0; i<=15000; i+=500,j++){
-		tick = $('<div class="tick" />').css('left',tickSpacing*j  + 'px');
-		$axis.append(tick);
-	}
-	
-	for (var i = 0,j=0,k=0; i<=15000; i+=1000,j+=2,k++){
-		tick = $('<div class="tick-label" />').css('left',(tickSpacing*j - 20)  + 'px').text(k*1000);
-		$axis.append(tick);
-		tick = $('<div class="tick tick-top" />').css('left',tickSpacing*j  + 'px');
-		$axis.append(tick);
-	}
-	
-	
-/*
-	(function(data){
-	var unique_phylums = [];
-	for (var i = 0; i < data.length; i++) {
-		for (var j = 0; j < data[i].phylums.length; j++){
-			if (unique_phylums.indexOf(data[i].phylums[j].phylum) == -1) {
-				unique_phylums.push(data[i].phylums[j].phylum);
-			}
-		}
-	}
-	unique_phylums.sort();
 		
-	var space = 12;
-	
-	var legend = d3.select('#legend2');
-	
-	
-	var div;
-	for (var i =0; i< unique_phylums.length; i++) {
-		
-		div = legend.select('#leg-labels2').append('div').attr('class','legend-text');
-		div.append('span').attr('class','legend-circ ' + unique_phylums[i]).style('background-color',namespace.colors[unique_phylums[i]]);
-		div.append('span').attr('class','legend-label').text(unique_phylums[i]);
-	}	
-	
-
-	
-	})(data);
-*/
-	
 		
 	$.fn.fullpage.reBuild();
 	
-	
-	
-	
-	
 };
+
+
 
 
 $.ajax(
@@ -1295,193 +1242,9 @@ $.ajax(
 		}
 	}
 );
-
-
-/******* BLOCKS **************/
-Holder.prototype.buildBlocks = function(){
-	var $block1 = $('#block1'),
-		$block2 = $('#block2'),
-		block;
 	
-	for (var i =1; i <= 100;i++){
-		block = $('<span class="block" />');
-		$block1.append(block);
-		if (i <= 95) {
-			block.addClass('filled');
-		}
-		
-		if (i%10 == 1){
-			block.css('clear','left');
-		}
-	}
+*/
 	
-	for (var i =1; i <= 100;i++){
-		block = $('<span class="block" />');
-		$block2.append(block);
-		if (i <= 98) {
-			block.addClass('filled');
-		}
-		
-		if (i%10 == 1){
-			block.css('clear','left');
-		}
-	}
-
-};
-
-namespace.buildBlocks();
-
-
-/***** TREEMAP *******/
-			
-			var treemap_data = {
-				name: 'composition',
-				children: [{"phylum":"Mollusca","count":42578},{"phylum":"Arthropoda","count":971918},{"phylum":"Cnidaria","count":9734},{"phylum":"Kinorhyncha","count":157},{"phylum":"Rhombozoa","count":89},{"phylum":"Orthonectida","count":24},{"phylum":"Ctenophora","count":165},{"phylum":"Loricifera","count":22},{"phylum":"Annelida","count":12993},{"phylum":"Hemichordata","count":101},{"phylum":"Echiura","count":178},{"phylum":"Chordata","count":95819},{"phylum":"Xenacoelomorpha","count":390},{"phylum":"Tardigrada","count":1085},{"phylum":"Kamptozoa","count":171},{"phylum":"Echinodermata","count":7213},{"phylum":"Nematoda","count":2720},{"phylum":"Acanthocephala","count":941},{"phylum":"Platyhelminthes","count":8072},{"phylum":"Cycliophora","count":2},{"phylum":"Nematomorpha","count":361},{"phylum":"Onychophora","count":178},{"phylum":"Myxozoa","count":240},{"phylum":"Sipuncula","count":241},{"phylum":"Micrognathozoa","count":1},{"phylum":"Rotifera","count":2257},{"phylum":"Chaetognatha","count":133},{"phylum":"Gnathostomulida","count":97},{"phylum":"Cephalorhyncha","count":19},{"phylum":"Placozoa","count":1},{"phylum":"Gastrotricha","count":854},{"phylum":"Brachiopoda","count":391},{"phylum":"Bryozoa","count":5836},{"phylum":"Nemertea","count":1213},{"phylum":"Porifera","count":8761},{"phylum":"Phoronida","count":16}]
-			};
-			
-			var treemap_position = function() {
-			  this.style("left", function(d) { return d.x + "px"; })
-			      .style("top", function(d) { return d.y + "px"; })
-			      .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
-			      .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
-			}
-			
-			var treemap_width = $('#treemap-wrapper').width(),
-				treemap_height= 210;
-			
-			var treemap = d3.layout.treemap()
-			    .size([treemap_width, treemap_height])
-			    .sticky(true)
-			    .sort(function(a,b) {
-				    return a.count - b.count;
-				})
-			    .value(function(d) { return d.count; });
-			    
-			var treemap_div = d3.select('#treemap')
-				.append('div')
-				.style({
-					width: treemap_width + 'px',
-					height: treemap_height + 'px',
-					display: 'block',
-					position: 'relative'
-				});
-				
-			var node = treemap_div.datum(treemap_data).selectAll(".treemap__node")
-			      .data(treemap.nodes)
-				  .enter().append("div")
-				  .style('background-color',function(d){return namespace.colors[d.phylum];})
-				  .style('position','absolute')
-			      .attr("class", function(d){return 'treemap__node ymg__bgcolor--'+d.phylum })
-			      .call(treemap_position);
-
 
 	
 });
-
-
-/*********** MAP **********************/
-
-var countries = [
-	{"country":"England","count":22,"id":826}, 
-	{"country":"Germany","count":18,"id":276}, 
-	{"country":"USA","count":16,"id":840}, 
-	{"country":"France","count":12,"id":250}, 
-	{"country":"Austria","count":6,"id":40}, 
-	{"country":"Sweden","count":6,"id":752}, 
-	{"country":"Switzerland","count":4,"id":756}, 
-	{"country":"Italy","count":3,"id":380}, 
-	{"country":"Russia","count":2,"id":643}, 
-	{"country":"Belgium","count":2,"id":56}, 
-	{"country":"Hungary","count":1,"id":348}, 
-	{"country":"Spain","count":1,"id":724}, 
-	{"country":"Canada","count":1,"id":124}, 
-	{"country":"South Africa","count":1,"id":710}, 
-	{"country":"Australia","count":1,"id":36}, 
-	{"country":"Denmark","count":1,"id":208}, 
-	{"country":"Norway","count":1,"id":578}, 
-	{"country":"Japan","count":1,"id":392}, 
-	{"country":"China","count":1,"id":156}
-];
-
-
-	var width = function(){
-		return parseInt(d3.select('#map').style('width'));
-	}
-	
-	var height = function(width){
-		return width * .5;
-	}
-	
-	var scale = function(width){
-		return width / 8;
-	}
-	
-	var translate = function(width) {
-		return width * .1;
-	};
-
-	// set your height of final map
-	var mapWidth = width(),
-	    mapHeight = height(width());
-	    
-	// create the svg in the appropriate holder
-	var svgmap = d3.select("#map").append("svg")
-	    .attr("width", mapWidth)
-	    .attr("height", mapHeight);
-	    
-	var main_g = svgmap.append("g")
-		.attr('transform','translate(-'+ translate(mapWidth)/2 +',0)');
-	    
-	var projection = d3.geo.equirectangular()
-	    .scale(scale(mapWidth))
-	    .translate([mapWidth/2,mapHeight/2]);
-	    
-
-	var path = d3.geo.path()
-   	 	.projection(projection);
-	
-		
-	var createBaseMap = function(){
-	
-		d3.json("js/world.json", function(error, world) {
-			
-			 var couns = main_g.append("g")
-			      .attr("class", "countries")
-				  .selectAll("path")
-			      .data(topojson.feature(world, world.objects.countries).features)
-				  .enter().append("path")
-			      .attr("class", function(d) { return 'country country-' + d.id })
-			      .attr("d", path);
-			      
-			    couns.on('click',function(d){console.log(d.id)});
-			    
-			     main_g.insert("path")
-			      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-			      .attr("class", "boundary ")
-			      .attr("d", path);
-		
-			/*
-main_g.insert("path")
-			      .datum(topojson.feature(world, world.objects.land))
-			      .attr("class", "land")
-			       .attr("class",  function(d,i) {console.log(d.id); return 'boundary ' + d.id; })
-			      .attr("d", path);
-			      			
-			  main_g.insert("path")
-			      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-			     // .data(topojson.feature(us, us.objects.counties).features)
-			      //.attr("class", "boundary ")
-			       .attr("class",  function(d,i) {console.log(d.id); return 'boundary ' + d.id; })
-			      .attr("d", path);
-*/
-			      
-
-		});
-		
-				
-
-	
-	}; // end createBaseMaps 
-	
-
-	createBaseMap();
