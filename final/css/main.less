@@ -1151,17 +1151,52 @@ max-width: 820px;
 }
 
 .boundary {
-	stroke:white;
+	//stroke: #E4B455;
+	stroke:transparent;
 }
 
 #map {
-	margin-bottom: 10em;
+	margin-bottom: 0;
+	margin-right: 240px;
 	
 	.country {
-		fill: #a5a5a5;
+		fill: #F0DEBA;
+		stroke: #E4B455;
+		stroke-opacity:.2;
 	}
 	
 	.boundary {
 		fill:transparent;
 	}
+}
+
+#section3 {
+	margin: 2em 30px 5em 70px;
+}
+
+#maplegend {
+	width:200px;
+	padding:10px;
+	background-color: #fff;
+	float: right;
+	margin-top: 3em;
+	margin-right: 30px;
+}
+
+#maplegend div {
+	display: block;
+	margin-bottom: .6em;
+}
+
+#maplegend span {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#maplegend span.block {
+	margin-right: .3em;
+}
+
+#maplegend h3 {
+	margin-top: 0;
 }

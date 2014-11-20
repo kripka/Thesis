@@ -13,13 +13,21 @@ $(function(){
 	var nav_btns = $('#fixed-nav a'),
 		loader = $('#loader'),
 		$viz = $('#viz-wrapper');
+		
+	var tooltip = d3.select("body")
+		.append("div")
+		.attr('id','tooltip')
+		.style("position", "absolute")
+		.style("z-index", "10")
+		.style("visibility", "hidden")
+		.text("a simple tooltip");
 
 
 function Holder(){
 	return null;
 }
 
-	var namespace = new Holder();
+	var namespace = {};
 	
 	namespace.states = {
 		buildbase : false,
@@ -27,20 +35,20 @@ function Holder(){
 		trees: false
 	};
 	
-	Holder.prototype.$opacityIn = function($el,duration){
+	namespace.$opacityIn = function($el,duration){
 		if (typeof duration === 'undefined') { duration = 200; }
 		$el.css('opacity',0).show().animate({'opacity':1},duration);
 	};
-	Holder.prototype.$opacityOut = function($el,duration){
+	namespace.$opacityOut = function($el,duration){
 		if (typeof duration === 'undefined') { duration = 200; }
 		$el.animate({'opacity':0},duration,'linear',function(){$(this).hide();});
 	};
 	
-	Holder.prototype.d3opacityIn = function(el,duration) {
+	namespace.d3opacityIn = function(el,duration) {
 		if (typeof duration === 'undefined') { duration = 200; }
 		el.style({'display':'block','opacity':0}).transition().duration(duration).style({'opacity':1});	
 	};
-	Holder.prototype.d3opacityOut = function(el,duration) {
+	namespace.d3opacityOut = function(el,duration) {
 		if (typeof duration === 'undefined') { duration = 200; }
 		el.style({'opacity':1}).transition().duration(duration).style({'opacity':0}).each(function(){ el.style({'display':'none'}) });	
 	};
@@ -80,7 +88,8 @@ function Holder(){
 		space: 12
 	};
 	
-	namespace.colors = {
+	/*
+namespace.colors = {
 		"Arthropoda":"rgb(164, 170, 20)",
 		"Chordata":"#2d9acd",
 		"Mollusca":"rgb(228, 152, 22)",
@@ -101,6 +110,50 @@ function Holder(){
 		"Nemertea":"#000",
 		"Porifera":"rgb(255, 128, 128)"
 	};
+*/
+
+	namespace.colors = {
+		"Arthropoda":"#a4aa14",
+		"Chordata":"#15b0bd",
+		"Mollusca":"#e9700d",
+		"Cnidaria":"#1c6fa4",
+		"Ctenophora":"#2a9228",
+		"Annelida":"#c42428",
+		"Echinodermata":"#855ead",
+		"Nematoda":"#804e45",
+		"Acanthocephala":"#cf6db2",
+		"Platyhelminthes":"#cf6db2",
+		"Nematomorpha":"#c8c781",
+		"Onychophora":"#90c8d1",
+		"Sipuncula":"#9fb7d4",
+		"Rotifera":"#e9a96e",
+		"Gastrotricha":"#8ccc7e",
+		"Brachiopoda":"#e98989",
+		"Bryozoa":"#b3a1c3",
+		"Nemertea":"#b38e87",
+		"Porifera":"#e2a6c1",
+		"Kinorhyncha":"#b6b6b6",
+		"Rhombozoa": "",
+		"Orthonectida":"",
+		"Loricifera":"",
+		"Hemichordata":"",
+		"Echiura":"",
+		"Xenacoelomorpha":"",
+		"Tardigrada":"",
+		"Kamptozoa":"",
+		"Acanthocephala":"",
+		"Cycliophora":"",
+		"Myxozoa":"",
+		"Micrognathozoa":"",
+		"Chaetognatha":"",
+		"Gnathostomulida":"",
+		"Cephalorhyncha":"",
+		"Placozoa":"",
+		"Phoronida":""
+	};
+	
+
+
 	
 	$screen2text = $('#screen2-text');
 	$screen2inject = $screen2text.find('#screen2-inject');
@@ -122,7 +175,7 @@ function AUTHOR_TREE(){
 	
 	
 AUTHOR_TREE.prototype.branch = function(x1,y1,x2,y2,count,highYear,year){
-	return function(){
+	//return function(){
 		var path;
 			var branch_data = [];
 			
@@ -151,11 +204,11 @@ AUTHOR_TREE.prototype.branch = function(x1,y1,x2,y2,count,highYear,year){
 				
 								
 			return line_function(branch_data);
-	};
+	//};
 };	
 
 AUTHOR_TREE.prototype.branch2 = function(x1,y1,x2,y2,count){
-	return function(){
+	//return function(){
 		var path;
 			var branch_data = [];
 			
@@ -178,7 +231,7 @@ AUTHOR_TREE.prototype.branch2 = function(x1,y1,x2,y2,count){
 				
 								
 			return line_function(branch_data);
-	};
+	//};
 };
 
 
@@ -196,7 +249,7 @@ var waypoint_set = false;
 			switch (index){
 				case 1:
 					
-					return;
+					break;
 				case 2:
 					$viz.css({
 						'position':'fixed',
@@ -209,7 +262,7 @@ var waypoint_set = false;
 					namespace.main_g2.style('display','none');
 					$viznav.css({'display':'none','opacity':0});
 					namespace.build_screen2(0);
-					return;
+					break;
 					
 				case 3:
 					$viz.css({
@@ -229,16 +282,16 @@ var waypoint_set = false;
 						namespace.build_base2();
 						namespace.states.buildbase2 = true;
 						namespace.states.trees = true;
-						build_author(namespace.linneaus);
+						build_author(namespace.linnaeus);
 						animateInAuthors(namespace.data);
 						namespace.d3opacityIn(namespace.legend);
 						$viznav.show().animate({'opacity':1},200);
 					}
 					
-					return;
+					break;
 					
 				case 4:
-					namespace.$opacityOut($viz);
+					//namespace.$opacityOut($viz);
 					/*
 $('#top100-header').waypoint({
 						context: $('#top100-header').parent(),
@@ -247,10 +300,10 @@ $('#top100-header').waypoint({
 						}	
 					});
 */
-					return;
+					break;
 					
 				default:
-					return;
+					break;
 				
 				
 			} // switch
@@ -282,6 +335,8 @@ $('#top100-header').waypoint({
 			    namespace.root_wrapper.selectAll('.root').remove();
 			    namespace.lifetime_wrapper.selectAll('.lifetime').remove();
 			    namespace.states.trees = false;
+			} else if (index == 3 && direction == 'down') {
+				namespace.$opacityOut($viz);;
 			}
 		}
 	});
@@ -309,7 +364,7 @@ $('#top100-header').waypoint({
 	// d3 stuff
 	
 /******************** BUILD SCALES *****************************************/	
-	Holder.prototype.build_scales = function(data) {
+	namespace.build_scales = function(data) {
 		var phylum_counts = [],
 			total_counts = [],
 			temp_count,
@@ -346,7 +401,8 @@ $('#top100-header').waypoint({
 	
 /******************** BUILD BASE *****************************************/
 	
-	Holder.prototype.build_base = function(){
+	namespace.build_base = function(){
+		// create an element not on page?
 		namespace.svg = namespace.wrapper.append('svg')
 			.attr({
 				width: namespace.settings.width,
@@ -520,13 +576,13 @@ $('#top100-header').waypoint({
 			if (tagx < 134 + 150 ) {
 				tagx = 134;
 			}  else {
-				tagx = tagx - 150;
+				tagx = tagx - 200;
 			}
 			
 			
 			tagy = namespace.year_scale(maxyear);
 						
-			if (tagy < namespace.settings.width/4) {
+			if (tagy < namespace.settings.width/3) {
 				tagy = tagy + 200;
 			} else {
 				tagy = tagy - 500;
@@ -586,7 +642,7 @@ $('#top100-header').waypoint({
 	namespace.screen2 = [
 		{
 			year: 1753,
-			html: '<div class="screen2-1"><p>In 1753, Carl Linneaus proposed binomial nomenclature, describing an organism with a one-word genus and one-word species, in his book <i>Species Planatarum</i>.</p></div>'
+			html: '<div class="screen2-1"><p>In 1753, Carl Linnaeus proposed binomial nomenclature, describing an organism with a one-word genus and one-word species, in his book <i>Species Planatarum</i>.</p></div>'
 		},
 		{
 			year: 1757,
@@ -594,11 +650,11 @@ $('#top100-header').waypoint({
 		},
 		{
 			year: 1758,
-			html: '<div class="screen2-1"><p>In 1758, Carl Linneaus published the 10th Edition of <i>Systema Naturae</i>, describing over 4000 animals using binomial nomenclature and securing binomial nomenclature as the scientific standard for naming animals. </p></div>'
+			html: '<div class="screen2-1"><p>In 1758, Carl Linnaeus published the 10th Edition of <i>Systema Naturae</i>, describing over 4000 animals using binomial nomenclature and securing binomial nomenclature as the scientific standard for naming animals. </p></div>'
 		},
 		{
 			year: 1737,
-			html: '<div class="screen2-1"><p>Carl Linneaus would describe 5275 animal species during his career, earning him #9 of the top authors to describe animal species since binomial nomenclature became the standard. </p></div>'
+			html: '<div class="screen2-1"><p>Carl Linnaeus would describe 5275 animal species during his career, earning him #9 of the top authors to describe animal species since binomial nomenclature became the standard. </p></div>'
 		}
 	];
 	
@@ -617,9 +673,10 @@ $('#top100-header').waypoint({
 				
 	});
 	
-	
-	Holder.prototype.build_screen2 = function(index){
+var totalLength;	
+	namespace.build_screen2 = function(index){
 		var cr = 5;
+		
 		
 		namespace.screen2g.selectAll('circle,path').remove();
 		$screen2text.css('opacity',0);
@@ -640,16 +697,26 @@ $('#top100-header').waypoint({
 						d: tree.branch2(namespace.year_scale(namespace.screen2[index].year), namespace.settings.height - namespace.settings.root_height - namespace.settings.padding.bottom ,namespace.year_scale(namespace.screen2[index].year + 30), namespace.leaf_y_scale(1200), 1100),
 						'class': 'branch'
 					});
+			
 					
-		var totalLength = path.node().getTotalLength();	
+		totalLength = path.node().getTotalLength();
+		
+		
+		
+		
+var offset = (/Firefox/i.test(navigator.userAgent)) ? totalLength / path.node().strokeWidth : totalLength;
+		
+		totalLength = offset;
 
-				path.attr("stroke-dasharray", totalLength + " " + totalLength)
+path.attr("stroke-dasharray", totalLength + " " + totalLength)
 				  .attr("stroke-dashoffset", -totalLength)
 				  .transition()
 				    .duration(500)
 				    .ease("linear")
 				    .attr("stroke-dashoffset", 0)
-				    .each('end',function(){
+
+				    
+					.each('end',function(){
 				    	
 					    
 					    namespace.screen2g.append('circle')
@@ -660,6 +727,7 @@ $('#top100-header').waypoint({
 							});
 					    
 				    });
+
 				    
 		} else if (index == 3) {  // end if index < 3
 			
@@ -673,7 +741,7 @@ $('#top100-header').waypoint({
 			    namespace.states.buildbase2 = true;
 		    }
 		    		    
-			build_author(namespace.linneaus);
+			build_author(namespace.linnaeus);
 			
 			namespace.d3opacityIn(namespace.legend,500);
 			namespace.d3opacityIn(namespace.main_g2,500);
@@ -704,6 +772,7 @@ var build_legend = function(data){
 	
 	var div;
 	for (var i =0; i< unique_phylums.length; i++) {
+		// create div, append last
 		div = namespace.legend.select('#leg-labels').append('div').attr('class','legend-text');
 		div.append('span').attr('class','legend-circ ' + unique_phylums[i]).style('background-color',namespace.colors[unique_phylums[i]]);
 		div.append('span').attr('class','legend-label').text(unique_phylums[i]);
@@ -976,11 +1045,6 @@ var build_interactions = function(){
 				
 		leaves.on("mouseover",function(d){
 			var author = this.__data__.author;
-			/*
-trees.transition().duration(50).style('opacity',function () {
-	        	return (this.__data__.author == author) ? namespace.settings.opacity[d3.select(this).attr('class')] : 0;
-			});
-*/
 			tooltip.html(
 				this.__data__.phylum + '<br />' + this.__data__.count + ' species<br />' + this.__data__.year
 			); 
@@ -989,41 +1053,24 @@ trees.transition().duration(50).style('opacity',function () {
 		
 		leaves.on("mouseout",function(d){
 			var author = this.__data__.author;
-			/*
-trees.transition().duration(50).style('opacity',function(){
-				return (d3.select(this).attr('class') == 'lifetime') ? 0 : namespace.settings.opacity[d3.select(this).attr('class')]; 
-			});
-*/
+
 			tooltip.style("visibility", "hidden");
 		});
             
 		leaves.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");});
 
-        
-        
-	var tooltip = d3.select("body")
-		.append("div")
-		.attr('id','tooltip')
-		.style("position", "absolute")
-		.style("z-index", "10")
-		.style("visibility", "hidden")
-		.text("a simple tooltip");
-		
-		
 	
-	
-	leaves.on('click',function(d){
-		var author = this.__data__.author;
-		var viz_nav_btns = $('.viz-nav-btn');
-		
-		for (var i = 0; i< viz_nav_btns.length; i++){
-			if (viz_nav_btns[i].__data__.author == author) {
-				console.log($(viz_nav_btns[i]));
-				$(viz_nav_btns[i]).d3Click();
+		leaves.on('click',function(d){
+			var author = this.__data__.author;
+			var viz_nav_btns = $('.viz-nav-btn');
+			
+			for (var i = 0; i< viz_nav_btns.length; i++){
+				if (viz_nav_btns[i].__data__.author == author) {
+					$(viz_nav_btns[i]).d3Click();
+				}
 			}
-		}
-		
-	});
+			
+		});
 		
 		
 		
@@ -1044,7 +1091,7 @@ var animateInAuthors = function(data) {
 	var sortData = data.sort(function(a,b){ return d3.ascending(a.birth,b.birth); });
 	
 	for (var i =0; i<data.length; i++){
-		if (data[i].author != 'Carl Linneaus') {
+		if (data[i].author != 'Carl Linnaeus') {
 			authorTimeout(sortData[i],i);
 			if (i == data.length - 1) {
 				setTimeout(
@@ -1064,7 +1111,7 @@ var animateInAuthors = function(data) {
 	
 /******************** MAIN VIZ *****************************************/
 
-	Holder.prototype.build_base2 = function(){
+	namespace.build_base2 = function(){
 		
 		var leaf_grid = namespace.main_g2.append('g').attr('id',"leaf_grid");
 	
@@ -1185,7 +1232,7 @@ $('.carousel-btn').on('click',function(){
 		namespace.build_base();
 		build_legend(namespace.data);
 		
-		namespace.linneaus = data[8];
+		namespace.linnaeus = data[8];
 		
 	});
 	
@@ -1298,7 +1345,7 @@ $.ajax(
 
 
 /******* BLOCKS **************/
-Holder.prototype.buildBlocks = function(){
+namespace.buildBlocks = function(){
 	var $block1 = $('#block1'),
 		$block2 = $('#block2'),
 		block;
@@ -1339,11 +1386,20 @@ namespace.buildBlocks();
 				children: [{"phylum":"Mollusca","count":42578},{"phylum":"Arthropoda","count":971918},{"phylum":"Cnidaria","count":9734},{"phylum":"Kinorhyncha","count":157},{"phylum":"Rhombozoa","count":89},{"phylum":"Orthonectida","count":24},{"phylum":"Ctenophora","count":165},{"phylum":"Loricifera","count":22},{"phylum":"Annelida","count":12993},{"phylum":"Hemichordata","count":101},{"phylum":"Echiura","count":178},{"phylum":"Chordata","count":95819},{"phylum":"Xenacoelomorpha","count":390},{"phylum":"Tardigrada","count":1085},{"phylum":"Kamptozoa","count":171},{"phylum":"Echinodermata","count":7213},{"phylum":"Nematoda","count":2720},{"phylum":"Acanthocephala","count":941},{"phylum":"Platyhelminthes","count":8072},{"phylum":"Cycliophora","count":2},{"phylum":"Nematomorpha","count":361},{"phylum":"Onychophora","count":178},{"phylum":"Myxozoa","count":240},{"phylum":"Sipuncula","count":241},{"phylum":"Micrognathozoa","count":1},{"phylum":"Rotifera","count":2257},{"phylum":"Chaetognatha","count":133},{"phylum":"Gnathostomulida","count":97},{"phylum":"Cephalorhyncha","count":19},{"phylum":"Placozoa","count":1},{"phylum":"Gastrotricha","count":854},{"phylum":"Brachiopoda","count":391},{"phylum":"Bryozoa","count":5836},{"phylum":"Nemertea","count":1213},{"phylum":"Porifera","count":8761},{"phylum":"Phoronida","count":16}]
 			};
 			
-			var treemap_position = function() {
+			/*
+var treemap_position = function() {
 			  this.style("left", function(d) { return d.x + "px"; })
 			      .style("top", function(d) { return d.y + "px"; })
 			      .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
 			      .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+			}
+*/
+			
+			var treemap_position = function() {
+			  this.attr("x", function(d) { return d.x; })
+			      .attr("y", function(d) { return d.y; })
+			      .attr("width", function(d) { return Math.max(0, d.dx - 1); })
+			      .attr("height", function(d) { return Math.max(0, d.dy - 1); });
 			}
 			
 			var treemap_width = $('#treemap-wrapper').width(),
@@ -1358,29 +1414,50 @@ namespace.buildBlocks();
 			    .value(function(d) { return d.count; });
 			    
 			var treemap_div = d3.select('#treemap')
-				.append('div')
-				.style({
+				.append('svg')
+				.attr({
 					width: treemap_width + 'px',
-					height: treemap_height + 'px',
-					display: 'block',
-					position: 'relative'
-				});
+					height: treemap_height + 'px'
+				})
+				.style('fill','transparent');
 				
 			var node = treemap_div.datum(treemap_data).selectAll(".treemap__node")
 			      .data(treemap.nodes)
-				  .enter().append("div")
-				  .style('background-color',function(d){return namespace.colors[d.phylum];})
-				  .style('position','absolute')
+				  .enter().append("rect")
+				  .style('fill',function(d){
+					  if (d.phylum == 'Arthropoda'){
+						  return namespace.colors[d.phylum];
+					
+						} else {
+						  return '#a5a5a5';
+					  }
+
+					  })
+				 .style('stroke','#efe7d9')
+				 .style('stroke-width',0.5)
 			      .attr("class", function(d){return 'treemap__node ymg__bgcolor--'+d.phylum })
-			      .call(treemap_position);
+			      .call(treemap_position)
+			      .on('mouseenter',function(d){
+				    	tooltip.html(
+							d.phylum + '<br />' + numberWithCommas(d.count)
+						); 
+						tooltip.style("visibility", "visible");  
+				   })
+				   .on('mouseleave',function(d){
+					   tooltip.style("visibility", "hidden");
+				   })
+				   .on('mousemove',function(d){
+					   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+				   });
 
 
 	
-});
+
 
 
 /*********** MAP **********************/
 
+/*
 var countries = [
 	{"country":"England","count":22,"id":826}, 
 	{"country":"Germany","count":18,"id":276}, 
@@ -1402,6 +1479,30 @@ var countries = [
 	{"country":"Japan","count":1,"id":392}, 
 	{"country":"China","count":1,"id":156}
 ];
+*/
+
+var countries = {
+	"id826":{"country":"England","count":22,"id":826}, 
+	"id276":{"country":"Germany","count":18,"id":276}, 
+	"id840":{"country":"USA","count":16,"id":840}, 
+	"id250":{"country":"France","count":12,"id":250}, 
+	"id40":{"country":"Austria","count":6,"id":40}, 
+	"id752":{"country":"Sweden","count":6,"id":752}, 
+	"id756":{"country":"Switzerland","count":4,"id":756}, 
+	"id380":{"country":"Italy","count":3,"id":380}, 
+	"id643":{"country":"Russia","count":2,"id":643}, 
+	"id56":{"country":"Belgium","count":2,"id":56}, 
+	"id348":{"country":"Hungary","count":1,"id":348}, 
+	"id724":{"country":"Spain","count":1,"id":724}, 
+	"id124":{"country":"Canada","count":1,"id":124}, 
+	"id710":{"country":"South Africa","count":1,"id":710}, 
+	"id36":{"country":"Australia","count":1,"id":36}, 
+	"id208":{"country":"Denmark","count":1,"id":208}, 
+	"id578":{"country":"Norway","count":1,"id":578}, 
+	"id392":{"country":"Japan","count":1,"id":392}, 
+	"id156":{"country":"China","count":1,"id":156}
+};
+
 
 
 	var width = function(){
@@ -1412,12 +1513,17 @@ var countries = [
 		return width * .5;
 	}
 	
-	var scale = function(width){
+	/*
+var scale = function(width){
 		return width / 8;
 	}
-	
+*/
+	var scale = function(width){
+		return width / 7;
+	}
+
 	var translate = function(width) {
-		return width * .1;
+		return width * .05;
 	};
 
 	// set your height of final map
@@ -1439,11 +1545,89 @@ var countries = [
 
 	var path = d3.geo.path()
    	 	.projection(projection);
+   	 	
+   	var choropleth = d3.scale.linear().range(['rgb(203, 212, 229)','rgb(58, 76, 108)']).domain([1,22]);
+			//.range(['#B9D1FC','#788FB8']).domain([1,22]);
+			var returnColor = function(id){
+				var count;
+				      switch (id) {
+					      case 826:
+					      	count = 22;
+					      	break;
+					      case 276:
+					      	count = 18;
+					      	break;
+					      case 840:
+					      	count=16;
+					      	break;
+					      case 250:
+					      	count=12;
+					      	break;
+					      case 40:
+					      	count=6;
+					      	break;
+					      case 752:
+					      	count=6;
+					      	break;
+					      case 756:
+					      	count=4;
+					      	break;
+					      case 380:
+					      	count=3;
+					      	break;
+					      case 643:
+					      	count=2;
+					      	break;
+					      case 56:
+					      	count=2;
+					      	break;
+					      case 348:
+					      case 724:
+					      case 124:
+					      case 710:
+					      case 36:
+					      case 208:
+					      case 578:
+					      case 392:
+					      case 156:
+					      	count=1;
+					      	break;
+					      default:
+					      	count = null;
+					      	break;
+				      }
+				      if (!count) {
+					      return;
+				      } else {
+					      return choropleth(count);
+				      }
+
+			};
+			
+			
+	var createMapLegend = function(){
+		var legend = d3.select('#maplegend');
+		var arr = [1,5,10,15,20,22],
+			div;
+			
+		arr.reverse();
+		for (var i =0;i<arr.length;i++){
+			div = legend.append('div');
+			div.append('span').attr('class','block').style('background-color',choropleth(arr[i]));
+			div.append('span').attr('class','word').text(arr[i] + ' authors');
+		}
+		
+	};
+	
+	createMapLegend();
+
 	
 		
 	var createBaseMap = function(){
 	
-		d3.json("js/world.json", function(error, world) {
+		d3.json("js/world-50m.json", function(error, world) {
+			
+						
 			
 			 var couns = main_g.append("g")
 			      .attr("class", "countries")
@@ -1451,27 +1635,50 @@ var countries = [
 			      .data(topojson.feature(world, world.objects.countries).features)
 				  .enter().append("path")
 			      .attr("class", function(d) { return 'country country-' + d.id })
-			      .attr("d", path);
-			      
-			    couns.on('click',function(d){console.log(d.id)});
+			      .attr("d", path)
+			      .style({
+				      'fill':function(d){return returnColor(d.id)},
+				      'stroke':	function(d){return returnColor(d.id)}		     
+				   });
+				   
+			couns.on('mouseenter',function(d){
+				var arr = [826,276,840,250,40,752,756,380,643,56,348,724,124,710,36,208,578,392,156];
+				if ($.inArray(d.id,arr) >= 0){
+					d3.select(this).style({
+						'stroke':'rgb(98, 117, 150)',
+						'stroke-opacity':1
+						
+					});
+					tooltip.html(
+						countries['id'+d.id].country + '<br />' + countries['id'+d.id].count
+					); 
+					tooltip.style("visibility", "visible");	
+				}
+			});
+			
+			couns.on('mouseleave',function(d){
+				d3.select(this).style({
+					'stroke': returnColor(d.id),
+					'stroke-opacity':.2
+					
+				});
+				tooltip.style("visibility", "hidden");
+			});
+			
+			
+		
+		couns.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");});
+			
+			
+			
+			//couns.on('click',function(d){console.log(d.id);});
+				   
+
 			    
-			     main_g.insert("path")
+			    /*
+ main_g.insert("path")
 			      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
 			      .attr("class", "boundary ")
-			      .attr("d", path);
-		
-			/*
-main_g.insert("path")
-			      .datum(topojson.feature(world, world.objects.land))
-			      .attr("class", "land")
-			       .attr("class",  function(d,i) {console.log(d.id); return 'boundary ' + d.id; })
-			      .attr("d", path);
-			      			
-			  main_g.insert("path")
-			      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-			     // .data(topojson.feature(us, us.objects.counties).features)
-			      //.attr("class", "boundary ")
-			       .attr("class",  function(d,i) {console.log(d.id); return 'boundary ' + d.id; })
 			      .attr("d", path);
 */
 			      
@@ -1485,3 +1692,5 @@ main_g.insert("path")
 	
 
 	createBaseMap();
+	
+});//jquery
