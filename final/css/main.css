@@ -1189,6 +1189,9 @@ h2 {
 #map {
   margin-bottom: 0;
 }
+#map svg {
+  overflow: hidden;
+}
 #map .country {
   fill: #F0DEBA;
   stroke: #E4B455;
