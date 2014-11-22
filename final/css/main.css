@@ -1186,6 +1186,9 @@ h2 {
 .boundary {
   stroke: transparent;
 }
+svg:not(:root) {
+  overflow: hidden;
+}
 #map {
   margin-bottom: 0;
 }
