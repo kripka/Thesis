@@ -810,6 +810,13 @@ top: 17px;
 
 }
 
+@media screen and (max-width:1000px){
+	#viz-nav {
+		left: 70px;
+		margin-left: 0;
+	}
+}
+
 #viz-nav-nav {
 	.sans-serif();
 	display: block;
@@ -1157,7 +1164,7 @@ max-width: 820px;
 
 #map {
 	margin-bottom: 0;
-	margin-right: 240px;
+	//margin-right: 240px;
 	
 	.country {
 		fill: #F0DEBA;
@@ -1174,13 +1181,18 @@ max-width: 820px;
 	margin: 2em 30px 5em 70px;
 }
 
+#map-wrapper {
+	position: relative;
+	margin-bottom: 4em;
+}
+
 #maplegend {
-	width:200px;
+	width:auto;
 	padding:10px;
 	background-color: #fff;
-	float: right;
-	margin-top: 3em;
-	margin-right: 30px;
+	position: absolute;
+	bottom:0;
+	left:40px;
 }
 
 #maplegend div {
@@ -1199,4 +1211,13 @@ max-width: 820px;
 
 #maplegend h3 {
 	margin-top: 0;
+}
+
+.block.legend-block{
+	width:15px;
+	height: 15px;
+}
+
+#body-wrapper {
+	min-width: 1000px;
 }

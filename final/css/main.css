@@ -870,6 +870,12 @@ h2 {
   margin-top: 5px;
   margin-bottom: .6em;
 }
+@media screen and (max-width: 1000px) {
+  #viz-nav {
+    left: 70px;
+    margin-left: 0;
+  }
+}
 #viz-nav-nav {
   font-family: 'Lato', sans-serif;
   font-weight: 400;
@@ -1182,7 +1188,6 @@ h2 {
 }
 #map {
   margin-bottom: 0;
-  margin-right: 240px;
 }
 #map .country {
   fill: #F0DEBA;
@@ -1195,13 +1200,17 @@ h2 {
 #section3 {
   margin: 2em 30px 5em 70px;
 }
+#map-wrapper {
+  position: relative;
+  margin-bottom: 4em;
+}
 #maplegend {
-  width: 200px;
+  width: auto;
   padding: 10px;
   background-color: #fff;
-  float: right;
-  margin-top: 3em;
-  margin-right: 30px;
+  position: absolute;
+  bottom: 0;
+  left: 40px;
 }
 #maplegend div {
   display: block;
@@ -1216,4 +1225,11 @@ h2 {
 }
 #maplegend h3 {
   margin-top: 0;
+}
+.block.legend-block {
+  width: 15px;
+  height: 15px;
+}
+#body-wrapper {
+  min-width: 1000px;
 }

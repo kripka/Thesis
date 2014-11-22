@@ -7,8 +7,30 @@ jQuery.fn.d3Click = function () {
   });
 };
 
-$(function(){
 
+$(function(){
+	
+	function deepCopy(obj) {
+	    if (Object.prototype.toString.call(obj) === '[object Array]') {
+	        var out = [], i = 0, len = obj.length;
+	        for ( ; i < len; i++ ) {
+	            out[i] = arguments.callee(obj[i]);
+	        }
+	        return out;
+	    }
+	    if (typeof obj === 'object') {
+	        var out = {}, i;
+	        for ( i in obj ) {
+	            out[i] = arguments.callee(obj[i]);
+	        }
+	        return out;
+	    }
+	    return obj;
+	}
+
+
+
+	var pristine_data;
 
 	var nav_btns = $('#fixed-nav a'),
 		loader = $('#loader'),
@@ -23,9 +45,6 @@ $(function(){
 		.text("a simple tooltip");
 
 
-function Holder(){
-	return null;
-}
 
 	var namespace = {};
 	
@@ -53,8 +72,25 @@ function Holder(){
 		el.style({'opacity':1}).transition().duration(duration).style({'opacity':0}).each(function(){ el.style({'display':'none'}) });	
 	};
 	
+	namespace.moveTooltip = function(){
+		var pageWidth = $(window).width(),
+			buffer;
+											
+		if (d3.event.pageX > pageWidth/4 * 3) {
+			buffer = d3.event.pageX - parseInt(tooltip.style('width')) - 10;
+		} else {
+			buffer = d3.event.pageX + 10;
+		}
+		
+		tooltip.style("top", (d3.event.pageY-10)+"px").style('left',buffer+"px");
+	}
+	
+	
+	
+	
 	namespace.wrapper = d3.select('#viz-wrapper');
 	
+	var bodyWidth = $(window).width();
 	
 	var w = window,
 	    d = document,
@@ -71,7 +107,7 @@ function Holder(){
 			bottom: 50,
 			left: 60	
 		},
-		width: x,
+		width: (bodyWidth < 768) ? 768 : x,
 		height: y,
 		root_height:100,
 		root_width: 1,
@@ -85,32 +121,10 @@ function Holder(){
 			leaf: 1,
 			lifetime: 1
 		},
-		space: 12
+		space: 12,
+		isFirefox: (/Firefox/i.test(navigator.userAgent)) ? true : false
 	};
 	
-	/*
-namespace.colors = {
-		"Arthropoda":"rgb(164, 170, 20)",
-		"Chordata":"#2d9acd",
-		"Mollusca":"rgb(228, 152, 22)",
-		"Cnidaria":"#cd2d9d",
-		"Ctenophora":"#6e0c00",
-		"Annelida":"#6e006b",
-		"Echinodermata":"#652dcd",
-		"Nematoda":"#4e810a",
-		"Acanthocephala":"#cdca2d",
-		"Platyhelminthes":"#350a81",
-		"Nematomorpha":"#810a52",
-		"Onychophora":"#cd472d",
-		"Sipuncula":"#9e735c",
-		"Rotifera":"#909e5c",
-		"Gastrotricha":"#566455",
-		"Brachiopoda":"#ccc",
-		"Bryozoa":"#444",
-		"Nemertea":"#000",
-		"Porifera":"rgb(255, 128, 128)"
-	};
-*/
 
 	namespace.colors = {
 		"Arthropoda":"#a4aa14",
@@ -132,7 +146,7 @@ namespace.colors = {
 		"Bryozoa":"#b3a1c3",
 		"Nemertea":"#b38e87",
 		"Porifera":"#e2a6c1",
-		"Kinorhyncha":"#b6b6b6",
+		"Kinorhyncha":"",
 		"Rhombozoa": "",
 		"Orthonectida":"",
 		"Loricifera":"",
@@ -167,14 +181,10 @@ namespace.colors = {
 	$( "#author-tag" ).draggable();
 	
 	
-function AUTHOR_TREE(){
-	return null;
-}
 
-
+var tree = {};
 	
-	
-AUTHOR_TREE.prototype.branch = function(x1,y1,x2,y2,count,highYear,year){
+tree.branch = function(x1,y1,x2,y2,count,highYear,year){
 	//return function(){
 		var path;
 			var branch_data = [];
@@ -207,7 +217,7 @@ AUTHOR_TREE.prototype.branch = function(x1,y1,x2,y2,count,highYear,year){
 	//};
 };	
 
-AUTHOR_TREE.prototype.branch2 = function(x1,y1,x2,y2,count){
+tree.branch2 = function(x1,y1,x2,y2,count){
 	//return function(){
 		var path;
 			var branch_data = [];
@@ -235,7 +245,6 @@ AUTHOR_TREE.prototype.branch2 = function(x1,y1,x2,y2,count){
 };
 
 
-var tree = new AUTHOR_TREE();
 
 /******************** FULL PAGE *****************************************/	
 var waypoint_set = false;
@@ -262,6 +271,16 @@ var waypoint_set = false;
 					namespace.main_g2.style('display','none');
 					$viznav.css({'display':'none','opacity':0});
 					namespace.build_screen2(0);
+					
+					if (namespace.states.trees) {
+						namespace.leaf_wrapper.selectAll('.leaf').remove();
+					    namespace.branch_wrapper.selectAll('.branch').remove();
+					    namespace.root_wrapper.selectAll('.root').remove();
+					    namespace.lifetime_wrapper.selectAll('.lifetime').remove();
+						namespace.states.trees = false;
+					}
+					
+					namespace.states.trees = false;
 					break;
 					
 				case 3:
@@ -271,6 +290,7 @@ var waypoint_set = false;
 					});
 					
 					if (!namespace.states.buildbase2) {
+						namespace.states.trees = true;
 						$viz.css({
 							'display':'block',
 							'position':'fixed',
@@ -288,20 +308,15 @@ var waypoint_set = false;
 						$viznav.show().animate({'opacity':1},200);
 					}
 					
+					if (!namespace.states.trees) {
+					animateInAuthors(namespace.data);
+					namespace.states.trees = true;
+				}
 					break;
-					
 				case 4:
-					//namespace.$opacityOut($viz);
-					/*
-$('#top100-header').waypoint({
-						context: $('#top100-header').parent(),
-						handler: function(direction){
-							console.log(direction);
-						}	
-					});
-*/
-					break;
+				
 					
+					break;
 				default:
 					break;
 				
@@ -316,27 +331,33 @@ $('#top100-header').waypoint({
 			} else if (index == 2 && direction == 'down') {
 				namespace.main_g2.style('display','block');
 				$('#howread-div').animate({'opacity':0},200,'linear',function(){ $(this).hide() });
-				if (!namespace.states.buildbase2) {
+				/*
+if (!namespace.states.buildbase2) {
 				    namespace.build_base2();
 				    namespace.settings.buildbase2 = true;
 			    }
-			    if (!namespace.states.trees) {
+*/
+			    /*
+if (!namespace.states.trees) {
 					animateInAuthors(namespace.data);
 					namespace.states.trees = true;
 				}
+*/
 				$screen2text.hide();
-				$viznav.css('display','block').animate({'opacity':1},200);
+				namespace.screen2g.selectAll('path,circle').remove();
+				$viznav.css('display','block').animate({'opacity':1},200);			
 			} else if (index == 3 && direction == 'up') {
 				namespace.main_g2.style('display','none');
-					$viznav.css({'display':'none','opacity':0});
-			
+				$viznav.css({'display':'none','opacity':0});
+				namespace.d3opacityOut(namespace.legend);
 				namespace.leaf_wrapper.selectAll('.leaf').remove();
 			    namespace.branch_wrapper.selectAll('.branch').remove();
 			    namespace.root_wrapper.selectAll('.root').remove();
 			    namespace.lifetime_wrapper.selectAll('.lifetime').remove();
-			    namespace.states.trees = false;
+			    $('#author-tag-close').trigger('click');
+			    namespace.screen2g.selectAll('path,circle').remove();
 			} else if (index == 3 && direction == 'down') {
-				namespace.$opacityOut($viz);;
+				namespace.$opacityOut($viz);
 			}
 		}
 	});
@@ -400,19 +421,21 @@ $('#top100-header').waypoint({
 	};
 	
 /******************** BUILD BASE *****************************************/
-	
-	namespace.build_base = function(){
-		// create an element not on page?
+
+	namespace.build_svg = function(){
 		namespace.svg = namespace.wrapper.append('svg')
 			.attr({
 				width: namespace.settings.width,
 				height: namespace.settings.height
 			});
-			
+	};
+
+	
+	namespace.build_base = function(){
+		
 		namespace.main_g = namespace.svg.append('g').attr('id','main_g');
 		namespace.main_g2 = namespace.svg.append('g').attr('id','main-g2');
-		
-		
+
 		var dirt = namespace.main_g.append('rect').attr({
 			x: 0,
 			y: namespace.settings.height - namespace.settings.root_height - namespace.settings.padding.bottom,
@@ -699,16 +722,12 @@ var totalLength;
 					});
 			
 					
-		totalLength = path.node().getTotalLength();
 		
-		
-		
-		
-var offset = (/Firefox/i.test(navigator.userAgent)) ? totalLength / path.node().strokeWidth : totalLength;
-		
-		totalLength = offset;
+	
 
-path.attr("stroke-dasharray", totalLength + " " + totalLength)
+if (!namespace.settings.isFirefox) {
+	totalLength = path.node().getTotalLength();
+	path.attr("stroke-dasharray", totalLength + " " + totalLength)
 				  .attr("stroke-dashoffset", -totalLength)
 				  .transition()
 				    .duration(500)
@@ -727,6 +746,19 @@ path.attr("stroke-dasharray", totalLength + " " + totalLength)
 							});
 					    
 				    });
+} else {
+	path.each(function(){				    	
+		    namespace.screen2g.append('circle')
+				.attr({
+					cx: namespace.year_scale(namespace.screen2[index].year),
+					cy: namespace.settings.height - namespace.settings.padding.bottom - namespace.settings.root_height,
+					r: cr
+				});
+	    });
+}
+
+
+
 
 				    
 		} else if (index == 3) {  // end if index < 3
@@ -749,6 +781,10 @@ path.attr("stroke-dasharray", totalLength + " " + totalLength)
 		    		    
 		    
 		} else if (index == 4) {
+			if (!namespace.states.trees) {
+					animateInAuthors(namespace.data);
+					namespace.states.trees = true;
+				}
 			$.fn.fullpage.moveTo(3);
 		} // end else
 	
@@ -796,31 +832,6 @@ var build_legend = function(data){
 		.style('margin-left', -namespace.leaf_r_scale(50) + 'px');
 		
 	
-	// TODO  attach data to legend items so i can mouse over and just see that phylum
-				
-/*
-	var legend_items = d3.select('#legend').selectAll('.legend-text');
-	
-	
-	legend_items.on('mouseover',function(d){
-		console.log(this.__data__);
-		var phylum = this.__data__.phylum;	
-		console.log(phylum);	
-		var trees = namespace.svg.selectAll('.leaf,.branch,.root');
-		trees.transition().duration(50).style('opacity',function () {
-        	return (this.__data__.phylum == phylum) ? opacity[d3.select(this).attr('class')] : 0;
-		});
-	});
-	
-	legend_items.on('mouseout',function(){
-		var trees = namespace.svg.selectAll('.leaf,.branch,.root');
-		trees.transition().duration(50).style('opacity',function(){
-				return opacity[d3.select(this).attr('class')]; 
-			});
-	});
-	
-*/
-	
 
 };
 
@@ -828,7 +839,7 @@ var build_legend = function(data){
 var build_author = function(data){
 	
 	var newObject = jQuery.extend(true, {}, data);
-
+	var totalLength;
 	var author = [newObject];
 	var years_no_zeroes = [];
 		
@@ -843,7 +854,7 @@ var build_author = function(data){
 	}
 	
 	var ayears;
-	ayears = author[0].years;	
+	ayears = deepCopy(author[0].years);	
 	ayears.sort(compare);	
 		
 	if (ayears[0].year == 0) {
@@ -935,15 +946,22 @@ var build_author = function(data){
 						"data-author": d.author
 					});
 				
-				var totalLength = path.node().getTotalLength();	
-
-				path.attr("stroke-dasharray", totalLength + " " + totalLength)
+					
+				
+		if (!namespace.settings.isFirefox) {
+			totalLength = path.node().getTotalLength();
+			path.attr("stroke-dasharray", totalLength + " " + totalLength)
 				  .attr("stroke-dashoffset", totalLength)
 				  .transition()
 				    .duration(500)
 				    .ease("linear")
 				    .attr("stroke-dashoffset", 0)
 				    .each('end',leaf_functions[x]);
+		} else {
+			path.each(leaf_functions[x]);
+		}
+
+				
 				    
 				 
 				// set phylum for data 
@@ -1057,7 +1075,7 @@ var build_interactions = function(){
 			tooltip.style("visibility", "hidden");
 		});
             
-		leaves.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");});
+		leaves.on("mousemove", namespace.moveTooltip);
 
 	
 		leaves.on('click',function(d){
@@ -1081,7 +1099,7 @@ var authorTimeout = function(data,i){
 	setTimeout(
 		function(){
 			build_author(data);
-		},i*100
+		},i*50
 	);
 	
 };
@@ -1095,7 +1113,7 @@ var animateInAuthors = function(data) {
 			authorTimeout(sortData[i],i);
 			if (i == data.length - 1) {
 				setTimeout(
-					build_interactions,i*120 + 1000
+					build_interactions,i*60 + 1000
 				);
 			}
 		}
@@ -1228,7 +1246,11 @@ $('.carousel-btn').on('click',function(){
 		loader.hide();
 		$('.shim').animate({'opacity':1},500);
 		
+		pristine_data = deepCopy(data);
+		
+		
 		namespace.build_scales(data);
+		namespace.build_svg();
 		namespace.build_base();
 		build_legend(namespace.data);
 		
@@ -1278,6 +1300,18 @@ namespace.bars.build = function(data){
 		bar_wrapper.select('.bar-phylums').append('div').text(numberWithCommas(total)).attr('class','bar-total');	
 	}
 	
+	d3.selectAll('.bar-phylums span').on('mouseenter',function(d){
+				    	tooltip.html(
+							d.phylum + '<br />' + numberWithCommas(d.count)
+						); 
+						tooltip.style("visibility", "visible");  
+				   })
+				   .on('mouseleave',function(d){
+					   tooltip.style("visibility", "hidden");
+				   })
+				   .on('mousemove',namespace.moveTooltip);
+	
+	
 	for (var i = 0,j=0; i<=15000; i+=500,j++){
 		tick = $('<div class="tick" />').css('left',tickSpacing*j  + 'px');
 		$axis.append(tick);
@@ -1289,37 +1323,6 @@ namespace.bars.build = function(data){
 		tick = $('<div class="tick tick-top" />').css('left',tickSpacing*j  + 'px');
 		$axis.append(tick);
 	}
-	
-	
-/*
-	(function(data){
-	var unique_phylums = [];
-	for (var i = 0; i < data.length; i++) {
-		for (var j = 0; j < data[i].phylums.length; j++){
-			if (unique_phylums.indexOf(data[i].phylums[j].phylum) == -1) {
-				unique_phylums.push(data[i].phylums[j].phylum);
-			}
-		}
-	}
-	unique_phylums.sort();
-		
-	var space = 12;
-	
-	var legend = d3.select('#legend2');
-	
-	
-	var div;
-	for (var i =0; i< unique_phylums.length; i++) {
-		
-		div = legend.select('#leg-labels2').append('div').attr('class','legend-text');
-		div.append('span').attr('class','legend-circ ' + unique_phylums[i]).style('background-color',namespace.colors[unique_phylums[i]]);
-		div.append('span').attr('class','legend-label').text(unique_phylums[i]);
-	}	
-	
-
-	
-	})(data);
-*/
 	
 		
 	$.fn.fullpage.reBuild();
@@ -1380,20 +1383,15 @@ namespace.buildBlocks();
 
 
 /***** TREEMAP *******/
+
+
+var create_treemap = function(){
 			
 			var treemap_data = {
 				name: 'composition',
 				children: [{"phylum":"Mollusca","count":42578},{"phylum":"Arthropoda","count":971918},{"phylum":"Cnidaria","count":9734},{"phylum":"Kinorhyncha","count":157},{"phylum":"Rhombozoa","count":89},{"phylum":"Orthonectida","count":24},{"phylum":"Ctenophora","count":165},{"phylum":"Loricifera","count":22},{"phylum":"Annelida","count":12993},{"phylum":"Hemichordata","count":101},{"phylum":"Echiura","count":178},{"phylum":"Chordata","count":95819},{"phylum":"Xenacoelomorpha","count":390},{"phylum":"Tardigrada","count":1085},{"phylum":"Kamptozoa","count":171},{"phylum":"Echinodermata","count":7213},{"phylum":"Nematoda","count":2720},{"phylum":"Acanthocephala","count":941},{"phylum":"Platyhelminthes","count":8072},{"phylum":"Cycliophora","count":2},{"phylum":"Nematomorpha","count":361},{"phylum":"Onychophora","count":178},{"phylum":"Myxozoa","count":240},{"phylum":"Sipuncula","count":241},{"phylum":"Micrognathozoa","count":1},{"phylum":"Rotifera","count":2257},{"phylum":"Chaetognatha","count":133},{"phylum":"Gnathostomulida","count":97},{"phylum":"Cephalorhyncha","count":19},{"phylum":"Placozoa","count":1},{"phylum":"Gastrotricha","count":854},{"phylum":"Brachiopoda","count":391},{"phylum":"Bryozoa","count":5836},{"phylum":"Nemertea","count":1213},{"phylum":"Porifera","count":8761},{"phylum":"Phoronida","count":16}]
 			};
 			
-			/*
-var treemap_position = function() {
-			  this.style("left", function(d) { return d.x + "px"; })
-			      .style("top", function(d) { return d.y + "px"; })
-			      .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
-			      .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
-			}
-*/
 			
 			var treemap_position = function() {
 			  this.attr("x", function(d) { return d.x; })
@@ -1446,80 +1444,138 @@ var treemap_position = function() {
 				   .on('mouseleave',function(d){
 					   tooltip.style("visibility", "hidden");
 				   })
-				   .on('mousemove',function(d){
-					   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-				   });
+				   .on('mousemove',namespace.moveTooltip);
 
 
-	
+};	
 
-
+create_treemap();
 
 /*********** MAP **********************/
 
-/*
-var countries = [
-	{"country":"England","count":22,"id":826}, 
-	{"country":"Germany","count":18,"id":276}, 
-	{"country":"USA","count":16,"id":840}, 
-	{"country":"France","count":12,"id":250}, 
-	{"country":"Austria","count":6,"id":40}, 
-	{"country":"Sweden","count":6,"id":752}, 
-	{"country":"Switzerland","count":4,"id":756}, 
-	{"country":"Italy","count":3,"id":380}, 
-	{"country":"Russia","count":2,"id":643}, 
-	{"country":"Belgium","count":2,"id":56}, 
-	{"country":"Hungary","count":1,"id":348}, 
-	{"country":"Spain","count":1,"id":724}, 
-	{"country":"Canada","count":1,"id":124}, 
-	{"country":"South Africa","count":1,"id":710}, 
-	{"country":"Australia","count":1,"id":36}, 
-	{"country":"Denmark","count":1,"id":208}, 
-	{"country":"Norway","count":1,"id":578}, 
-	{"country":"Japan","count":1,"id":392}, 
-	{"country":"China","count":1,"id":156}
-];
-*/
 
-var countries = {
-	"id826":{"country":"England","count":22,"id":826}, 
-	"id276":{"country":"Germany","count":18,"id":276}, 
-	"id840":{"country":"USA","count":16,"id":840}, 
-	"id250":{"country":"France","count":12,"id":250}, 
-	"id40":{"country":"Austria","count":6,"id":40}, 
-	"id752":{"country":"Sweden","count":6,"id":752}, 
-	"id756":{"country":"Switzerland","count":4,"id":756}, 
-	"id380":{"country":"Italy","count":3,"id":380}, 
-	"id643":{"country":"Russia","count":2,"id":643}, 
-	"id56":{"country":"Belgium","count":2,"id":56}, 
-	"id348":{"country":"Hungary","count":1,"id":348}, 
-	"id724":{"country":"Spain","count":1,"id":724}, 
-	"id124":{"country":"Canada","count":1,"id":124}, 
-	"id710":{"country":"South Africa","count":1,"id":710}, 
-	"id36":{"country":"Australia","count":1,"id":36}, 
-	"id208":{"country":"Denmark","count":1,"id":208}, 
-	"id578":{"country":"Norway","count":1,"id":578}, 
-	"id392":{"country":"Japan","count":1,"id":392}, 
-	"id156":{"country":"China","count":1,"id":156}
+var choropleth = d3.scale.linear().range(['rgb(203, 212, 229)','rgb(58, 76, 108)']).domain([1,22]);
+			//.range(['#B9D1FC','#788FB8']).domain([1,22]);
+			var returnColor = function(id){
+				var count;
+				      switch (id) {
+					      case 'GBR':
+					      	count = 22;
+					      	break;
+					      case 'DEU':
+					      	count = 18;
+					      	break;
+					      case 'USA':
+					      	count=16;
+					      	break;
+					      case 'FRA':
+					      	count=12;
+					      	break;
+					      case 'AUT':
+					      	count=6;
+					      	break;
+					      case 'SWE':
+					      	count=6;
+					      	break;
+					      case 'CHE':
+					      	count=4;
+					      	break;
+					      case 'ITA':
+					      	count=3;
+					      	break;
+					      case 'RUS':
+					      case 'BEL':
+					      	count=2;
+					      	break;
+					      case 'HUN':
+					      case 'ESP':
+					      case 'CAN':
+					      case 'ZAF':
+					      case 'AUS':
+					      case 'DNK':
+					      case 'NOR':
+					      case 'JPN':
+					      case 'CHN':
+					      	count=1;
+					      	break;
+					      default:
+					      	count = null;
+					      	break;
+				      }
+				      if (!count) {
+					      return;
+				      } else {
+					      return choropleth(count);
+				      }
+
+			};
+
+
+
+   	 var countries = {
+	"idGBR":{"country":"England","count":22,"id":'GBR'}, 
+	"idDEU":{"country":"Germany","count":18,"id":'DEU'}, 
+	"idUSA":{"country":"USA","count":16,"id":'USA'}, 
+	"idFRA":{"country":"France","count":12,"id":'FRA'}, 
+	"idAUT":{"country":"Austria","count":6,"id":'AUT'}, 
+	"idSWE":{"country":"Sweden","count":6,"id":'SWE'}, 
+	"idCHE":{"country":"Switzerland","count":4,"id":'CHE'}, 
+	"idITA":{"country":"Italy","count":3,"id":'ITA'}, 
+	"idRUS":{"country":"Russia","count":2,"id":'RUS'}, 
+	"idBEL":{"country":"Belgium","count":2,"id":'BEL'}, 
+	"idHUN":{"country":"Hungary","count":1,"id":'HUN'}, 
+	"idESP":{"country":"Spain","count":1,"id":'ESP'}, 
+	"idCAN":{"country":"Canada","count":1,"id":'CAN'}, 
+	"idZAF":{"country":"South Africa","count":1,"id":'ZAF'}, 
+	"idAUS":{"country":"Australia","count":1,"id":'AUS'}, 
+	"idDNK":{"country":"Denmark","count":1,"id":'DNK'}, 
+	"idNOR":{"country":"Norway","count":1,"id":'NOR'}, 
+	"idJPN":{"country":"Japan","count":1,"id":'JPN'}, 
+	"idCHN":{"country":"China","count":1,"id":'CHN'}
 };
 
 
 
-	var width = function(){
+				
+			
+	var createMapLegend = function(){
+		var legend = d3.select('#maplegend');
+		var arr = [1,5,10,15,20,22],
+			div;
+			
+		arr.reverse();
+		for (var i =0;i<arr.length;i++){
+			div = legend.append('div');
+			div.append('span').attr('class','block legend-block').style('background-color',choropleth(arr[i]));
+			if (arr[i] == 1) {
+				div.append('span').attr('class','word legend-label').text(arr[i] + ' author');
+			} else {
+				div.append('span').attr('class','word legend-label').text(arr[i] + ' authors');
+			}
+			
+		}
+		
+	};
+	
+	createMapLegend();
+
+	
+		
+	var createBaseMap = function(){
+	
+		d3.json("js/world.topo.json", function(error, wor) {
+			
+			var width = function(){
 		return parseInt(d3.select('#map').style('width'));
 	}
 	
 	var height = function(width){
-		return width * .5;
+		return width * .45;
 	}
 	
-	/*
-var scale = function(width){
-		return width / 8;
-	}
-*/
 	var scale = function(width){
-		return width / 7;
+		//return width / 7;
+		return width/7 ;
 	}
 
 	var translate = function(width) {
@@ -1537,102 +1593,22 @@ var scale = function(width){
 	    
 	var main_g = svgmap.append("g")
 		.attr('transform','translate(-'+ translate(mapWidth)/2 +',0)');
-	    
-	var projection = d3.geo.equirectangular()
+	  
+	 var projection = d3.geo.cylindricalStereographic()  
+	//var projection = d3.geo.equirectangular()
 	    .scale(scale(mapWidth))
-	    .translate([mapWidth/2,mapHeight/2]);
+	    //.translate([mapWidth/2,mapHeight/2]);
+	    .translate([mapWidth/2,mapHeight/1.5]);
 	    
 
 	var path = d3.geo.path()
    	 	.projection(projection);
-   	 	
-   	var choropleth = d3.scale.linear().range(['rgb(203, 212, 229)','rgb(58, 76, 108)']).domain([1,22]);
-			//.range(['#B9D1FC','#788FB8']).domain([1,22]);
-			var returnColor = function(id){
-				var count;
-				      switch (id) {
-					      case 826:
-					      	count = 22;
-					      	break;
-					      case 276:
-					      	count = 18;
-					      	break;
-					      case 840:
-					      	count=16;
-					      	break;
-					      case 250:
-					      	count=12;
-					      	break;
-					      case 40:
-					      	count=6;
-					      	break;
-					      case 752:
-					      	count=6;
-					      	break;
-					      case 756:
-					      	count=4;
-					      	break;
-					      case 380:
-					      	count=3;
-					      	break;
-					      case 643:
-					      	count=2;
-					      	break;
-					      case 56:
-					      	count=2;
-					      	break;
-					      case 348:
-					      case 724:
-					      case 124:
-					      case 710:
-					      case 36:
-					      case 208:
-					      case 578:
-					      case 392:
-					      case 156:
-					      	count=1;
-					      	break;
-					      default:
-					      	count = null;
-					      	break;
-				      }
-				      if (!count) {
-					      return;
-				      } else {
-					      return choropleth(count);
-				      }
+   	 
 
-			};
-			
-			
-	var createMapLegend = function(){
-		var legend = d3.select('#maplegend');
-		var arr = [1,5,10,15,20,22],
-			div;
-			
-		arr.reverse();
-		for (var i =0;i<arr.length;i++){
-			div = legend.append('div');
-			div.append('span').attr('class','block').style('background-color',choropleth(arr[i]));
-			div.append('span').attr('class','word').text(arr[i] + ' authors');
-		}
-		
-	};
-	
-	createMapLegend();
-
-	
-		
-	var createBaseMap = function(){
-	
-		d3.json("js/world-50m.json", function(error, world) {
-			
-						
-			
 			 var couns = main_g.append("g")
 			      .attr("class", "countries")
 				  .selectAll("path")
-			      .data(topojson.feature(world, world.objects.countries).features)
+			      .data(topojson.feature(wor, wor.objects.world).features)
 				  .enter().append("path")
 			      .attr("class", function(d) { return 'country country-' + d.id })
 			      .attr("d", path)
@@ -1640,9 +1616,10 @@ var scale = function(width){
 				      'fill':function(d){return returnColor(d.id)},
 				      'stroke':	function(d){return returnColor(d.id)}		     
 				   });
-				   
-			couns.on('mouseenter',function(d){
-				var arr = [826,276,840,250,40,752,756,380,643,56,348,724,124,710,36,208,578,392,156];
+	
+	
+				couns.on('mouseenter',function(d){
+				var arr = ['RUS','DEU','FRA','USA','AUT','SWE','CHE','ITA','GBR','BEL','HUN','ESP','CAN','ZAF','AUS','DNK','NOR','JPN','CHN'];
 				if ($.inArray(d.id,arr) >= 0){
 					d3.select(this).style({
 						'stroke':'rgb(98, 117, 150)',
@@ -1667,21 +1644,9 @@ var scale = function(width){
 			
 			
 		
-		couns.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");});
+		couns.on("mousemove", namespace.moveTooltip);
 			
-			
-			
-			//couns.on('click',function(d){console.log(d.id);});
-				   
-
-			    
-			    /*
- main_g.insert("path")
-			      .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-			      .attr("class", "boundary ")
-			      .attr("d", path);
-*/
-			      
+						         
 
 		});
 		
@@ -1692,5 +1657,48 @@ var scale = function(width){
 	
 
 	createBaseMap();
+	
+	var resizeTimeout;
+	
+		
+	function updateWindow(){
+		
+		var deep = deepCopy(pristine_data);
+				
+	    namespace.settings.width = w.innerWidth || e.clientWidth || g.clientWidth;
+	    namespace.settings.height = w.innerHeight|| e.clientHeight|| g.clientHeight;
+	    
+	    namespace.settings.width = (bodyWidth < 768) ? 768 : namespace.settings.width;
+	
+	    namespace.svg.attr("width", namespace.settings.width).attr("height", namespace.settings.height);
+	    namespace.svg.selectAll('line,path,circle,text,rect,g').remove();
+	    
+	    namespace.build_scales(deep);
+	    namespace.build_base();
+	    	    
+	    if (namespace.states.buildbase2){
+		    namespace.build_base2();
+	    }
+	    
+	    
+	    clearTimeout(resizeTimeout);
+	    
+	    resizeTimeout = setTimeout(function(){
+		     $.fn.fullpage.reBuild();
+		   if (namespace.states.trees){
+			    build_author(namespace.linnaeus);
+			    animateInAuthors(deep);
+		    } 
+	    },1000);
+	    	    
+	    d3.select('#map svg').remove();
+	    createBaseMap();
+	    
+	    d3.select('#treemap svg').remove();
+	    create_treemap();
+	   
+	}
+	window.onresize = updateWindow;
+	
 	
 });//jquery
