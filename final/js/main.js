@@ -473,7 +473,8 @@ if (!namespace.states.trees) {
 	
 		year_axis_titles.append('text').attr({
 				x: namespace.year_scale(namespace.min_year),
-				y: namespace.settings.height - 20,
+				//y: namespace.settings.height - 20,
+				y: namespace.settings.height - 132,
 				"class":'year_axis_title'
 			}).text(namespace.min_year)
 			.style('text-anchor','middle');
@@ -481,9 +482,11 @@ if (!namespace.states.trees) {
 		year_grid.append('line')
 				.attr({
 					x1:namespace.year_scale(namespace.min_year),
-					y1:namespace.settings.height - 40,
+					y1: namespace.settings.height - 150,
+					//y1:namespace.settings.height - 40,
 					x2:namespace.year_scale(namespace.min_year),
-					y2:namespace.settings.height - 32,
+					y2: namespace.settings.height - 140,
+					//y2:namespace.settings.height - 32,
 					"class":'year-line-1'
 				})
 				.style('stroke','black')
@@ -491,7 +494,8 @@ if (!namespace.states.trees) {
 			
 		year_axis_titles.append('text').attr({
 			x: namespace.year_scale(namespace.max_year),
-			y: namespace.settings.height - 25,
+			//y: namespace.settings.height - 25,
+			y: namespace.settings.height - 132,
 			"class":'year_axis_title'
 		}).text(namespace.max_year)
 			.style('text-anchor','middle');
@@ -499,9 +503,11 @@ if (!namespace.states.trees) {
 		year_grid.append('line')
 			.attr({
 				x1:namespace.year_scale(namespace.max_year),
-				y1:namespace.settings.height - 40,
+				//y1:namespace.settings.height - 40,
+				y1: namespace.settings.height - 150,
 				x2:namespace.year_scale(namespace.max_year),
-				y2:namespace.settings.height - 32,
+				y2: namespace.settings.height - 140,
+				//y2:namespace.settings.height - 32,
 				"class":'year-line-1'
 			})
 			.style('stroke','black')
@@ -511,7 +517,8 @@ if (!namespace.states.trees) {
 		for (var i = 1750; i < namespace.max_year + 49; i+=50) {
 			year_axis_titles.append('text').attr({
 				x: namespace.year_scale(i),
-				y: namespace.settings.height - 25,
+				//y: namespace.settings.height - 25,
+				y: namespace.settings.height - 132,
 				"class":'year_axis_title'
 			}).text(i)
 			.style('text-anchor','middle');
@@ -519,9 +526,11 @@ if (!namespace.states.trees) {
 			year_grid.append('line')
 				.attr({
 					x1:namespace.year_scale(i),
-					y1:namespace.settings.height - 40,
+					//y1:namespace.settings.height - 40,
+					y1: namespace.settings.height - 150,
 					x2:namespace.year_scale(i),
-					y2:namespace.settings.height - 32,
+					//y2:namespace.settings.height - 32,
+					y2: namespace.settings.height - 140,
 					"class":'year-line-1'
 				})
 				.style('stroke','black')
@@ -767,6 +776,18 @@ if (!namespace.settings.isFirefox) {
 	    	$screen2text.css({'top':namespace.leaf_y_scale(1400) + 'px','left':(namespace.year_scale(namespace.screen2[index].year + 40)) + 'px'}).show();
 	    	$screen2next.show();
 		    $screen2text.animate({'opacity':1},200);
+		    
+		    var yg = d3.select('#year_grid');
+		    
+		    yg.selectAll('.year-line-1').transition().duration(200).attr({
+			    y1: namespace.settings.height - 40,
+			    y2: namespace.settings.height - 32
+		    });
+		    
+		    d3.selectAll('.year_axis_title').transition().duration(200).attr({
+			    y: namespace.settings.height - 25
+		    });
+		    
 		    
 		    if (!namespace.states.buildbase2) {
 			    namespace.build_base2();
