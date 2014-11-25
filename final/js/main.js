@@ -356,6 +356,17 @@ if (!namespace.states.trees) {
 			    namespace.lifetime_wrapper.selectAll('.lifetime').remove();
 			    $('#author-tag-close').trigger('click');
 			    namespace.screen2g.selectAll('path,circle').remove();
+			    
+			d3.selectAll('.year-line-1').transition().duration(200).attr({
+			    y1: namespace.settings.height - 150,
+			    y2: namespace.settings.height - 140
+		    });
+		    
+		    d3.selectAll('.year_axis_title').transition().duration(200).attr({
+			    y: namespace.settings.height - 132
+		    });
+			    
+			    
 			} else if (index == 3 && direction == 'down') {
 				namespace.$opacityOut($viz);
 			}
@@ -777,9 +788,8 @@ if (!namespace.settings.isFirefox) {
 	    	$screen2next.show();
 		    $screen2text.animate({'opacity':1},200);
 		    
-		    var yg = d3.select('#year_grid');
 		    
-		    yg.selectAll('.year-line-1').transition().duration(200).attr({
+		    d3.selectAll('.year-line-1').transition().duration(200).attr({
 			    y1: namespace.settings.height - 40,
 			    y2: namespace.settings.height - 32
 		    });
